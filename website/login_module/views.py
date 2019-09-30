@@ -10,15 +10,17 @@ def login(request):
 		username = request.POST.get('username')
 		password = request.POST.get('password')
 		error = None
-		if user_exists(username):
+		user = None
+		try:
+			user = User.objects.get(username=username)
 			valid_user = valid_credentials(username, password)
 			if valid_user:
 				userid = valid_user.id
 				return redirect(user, userid)
 			else:
 				error = 'Invalid password'
-		else:
-			error = 'Invalid username'
+		except User.DoesNotExist:
+	    error = 'Invalid username'
 		context['error'] = error
 		return render(request, 'login.html', context)
 	return render(request, 'login.html', context)
